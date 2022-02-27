@@ -80,6 +80,13 @@ loan = {
 # Print each variable.
 # YOUR CODE HERE!
 
+future_value = loan.get('future_value')
+remaining_months = loan.get('remaining_months')
+
+print(f"The Future Value on this loan is {future_value}")
+print(f"The Remaining Months on this loan is {remaining_months}")
+
+
 
 # @TODO: Use the formula for Present Value to calculate a "fair value" of the loan.
 # Use a minimum required return of 20% as the discount rate.
@@ -88,11 +95,33 @@ loan = {
 
 # YOUR CODE HERE!
 
+discount_rate = .2
+
+present_value = future_value / (1 + discount_rate/12) ** remaining_months
+
+print(f"The Fair Value of the loan is {present_value}")
+
+
+
+
 # If Present Value represents what the loan is really worth, does it make sense to buy the loan at its cost?
 # @TODO: Write a conditional statement (an if-else statement) to decide if the present value represents the loan's fair value.
 #    If the present value of the loan is greater than or equal to the cost, then print a message that says the loan is worth at least the cost to buy it.
 #    Else, the present value of the loan is less than the loan cost, then print a message that says that the loan is too expensive and not worth the price.
 # YOUR CODE HERE!
+
+loan_price = loan.get('loan_price')
+
+#reused code from split_second_part_2 activity
+# If present value is greater than cost to buy (loan_price), buy it:
+if present_value > loan_price:
+    print("Buy this one, superior bank boss! It's worth more than it's selling for.")
+# Otherwise, take a pass:
+elif present_value < loan_price:
+    print("Don't buy this, as it's offered at a price higher than what it's worth.")
+# The edge case:
+elif present_value == loan_price:
+    print("Breakeven case! You can expect to earn exactly your hurdle rate on this deal.")
 
 
 """Part 3: Perform Financial Calculations.
@@ -120,9 +149,17 @@ new_loan = {
 # YOUR CODE HERE!
 
 
+def calculate_present_value(future_value, remaining_months, annual_discount_rate):
+    present_value = future_value / (1 + (annual_discount_rate / 12)) ** remaining_months
+    return present_value
+
+
 # @TODO: Use the function to calculate the present value of the new loan given below.
 #    Use an `annual_discount_rate` of 0.2 for this new loan calculation.
 # YOUR CODE HERE!
+
+annual_discount_rate = .2
+
 print(f"The present value of the loan is: {present_value}")
 
 
