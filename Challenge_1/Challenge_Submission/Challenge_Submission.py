@@ -31,8 +31,8 @@ print(f"There are {loan_count} loans in the list.")
 
 #define variable "loan_total" equal to sum of all loans in list
 loan_total = (sum(loan_costs))
-#print statement displaying loan total
-print(f"The total of all loans in the list is {loan_total}.")
+#print statement displaying loan total rounded to 2 decimal places
+print(f"The total of all loans in the list is: ${loan_total:.2f}")
 
 # What is the average loan amount from the list?
 # @TODO: Using the sum of all loans and the total number of loans, calculate the average loan price.
@@ -41,8 +41,8 @@ print(f"The total of all loans in the list is {loan_total}.")
 
 #define variable "avg_loan" equal to "loan_total" divided by "loan_count", which were defined previously on line 23 & 32 respectively
 avg_loan = (loan_total/loan_count)
-#print statement displaying avg loan
-print(f"The average loan value in the list is {avg_loan}.")
+#print statement displaying avg loan, rounded to the second decimal due to it being a dollar amount
+print(f"The average loan value in the list is: ${avg_loan:.2f}")
 
 
 """Part 2: Analyze Loan Data.
@@ -80,11 +80,13 @@ loan = {
 # Print each variable.
 # YOUR CODE HERE!
 
+#created variables for future_value and remianing_months in case needed later in program
 future_value = loan.get('future_value')
 remaining_months = loan.get('remaining_months')
 
-print(f"The Future Value on this loan is {future_value}")
-print(f"The Remaining Months on this loan is {remaining_months}")
+#print the future value and remaining months with a statement included, put future value in dollars to match rest of program
+print(f"The Future Value on this loan is: ${future_value:.2f}")
+print(f"The number of Months Remaining on this loan are: {remaining_months}")
 
 
 
@@ -95,13 +97,13 @@ print(f"The Remaining Months on this loan is {remaining_months}")
 
 # YOUR CODE HERE!
 
+#defined discount_rate variable
 discount_rate = .2
 
-present_value = future_value / (1 + discount_rate/12) ** remaining_months
+#created a variable for fair_value using included formula and printed result
+fair_value = future_value / (1 + discount_rate/12) ** remaining_months
 
-print(f"The Fair Value of the loan is {present_value}")
-
-
+print(f"The Fair Value of the loan is: ${fair_value:.2f}")
 
 
 # If Present Value represents what the loan is really worth, does it make sense to buy the loan at its cost?
@@ -110,18 +112,17 @@ print(f"The Fair Value of the loan is {present_value}")
 #    Else, the present value of the loan is less than the loan cost, then print a message that says that the loan is too expensive and not worth the price.
 # YOUR CODE HERE!
 
+#defined variable for loan_price using get()
 loan_price = loan.get('loan_price')
 
 #reused code from split_second_part_2 activity
-# If present value is greater than cost to buy (loan_price), buy it:
-if present_value > loan_price:
+#Continued to use variable name fair_value to represent my calculated present value and also to differentiate from variables used in next section.
+# If fair_value is greater than or equal to cost to buy (loan_price), buy it:
+if fair_value >= loan_price:
     print("Buy this one, superior bank boss! It's worth more than it's selling for.")
 # Otherwise, take a pass:
-elif present_value < loan_price:
+elif fair_value < loan_price:
     print("Don't buy this, as it's offered at a price higher than what it's worth.")
-# The edge case:
-elif present_value == loan_price:
-    print("Breakeven case! You can expect to earn exactly your hurdle rate on this deal.")
 
 
 """Part 3: Perform Financial Calculations.
@@ -154,13 +155,20 @@ def calculate_present_value(future_value, remaining_months, annual_discount_rate
     return present_value
 
 
+
 # @TODO: Use the function to calculate the present value of the new loan given below.
 #    Use an `annual_discount_rate` of 0.2 for this new loan calculation.
 # YOUR CODE HERE!
 
-annual_discount_rate = .2
+#copied from challenge module as directed by "Your function could then be used as shown in the following example:"
+annual_discount_rate = 0.20
+present_value = calculate_present_value(
+    new_loan["future_value"],
+    new_loan["remaining_months"],
+    annual_discount_rate)
 
-print(f"The present value of the loan is: {present_value}")
+#chose not to round present_value to two decimals or add dollar sign as this was prewritten in started code 
+print(f"The present value of the loan is: ${present_value:.2f}")
 
 
 """Part 4: Conditionally filter lists of loans.
@@ -204,11 +212,25 @@ loans = [
 # @TODO: Create an empty list called `inexpensive_loans`
 # YOUR CODE HERE!
 
+#created new list for inexpensive_loans
+inexpensive_loans = []
+
 # @TODO: Loop through all the loans and append any that cost $500 or less to the `inexpensive_loans` list
 # YOUR CODE HERE!
 
+#using for loop, iterated through loans list, calling the "loan_price" value and determining if it is less than or equal to $500
+#if the loan_price was less than or equal to $500, appended the dict for that loan to the "inexpensive_loans" list
+
+for dict in loans:
+    if dict.get("loan_price") <= 500:
+        inexpensive_loans.append(dict)
+
 # @TODO: Print the `inexpensive_loans` list
 # YOUR CODE HERE!
+
+#printed the list of inexpensive loans
+
+print(f"Here is a list of Inexpensive Loans currently available for purchase - {inexpensive_loans}")
 
 
 """Part 5: Save the results.
@@ -234,3 +256,18 @@ output_path = Path("inexpensive_loans.csv")
 # @TODO: Use the csv library and `csv.writer` to write the header row
 # and each row of `loan.values()` from the `inexpensive_loans` list.
 # YOUR CODE HERE!
+
+#reused code from automated equity rounds activity
+print("Writing the data to a CSV file...")
+# Open the output CSV file path using `with open`
+with open(output_path, "w") as csvfile:
+    # Create a csvwriter
+    csvwriter = csv.writer(csvfile, delimiter=",")
+
+    # Write the header to the CSV file
+    csvwriter.writerow(header)
+
+    # Write the values of each dictionary inside of `inexpensive_loans`
+    # as a row in the CSV file.
+    for item in inexpensive_loans:
+        csvwriter.writerow(item.values())
